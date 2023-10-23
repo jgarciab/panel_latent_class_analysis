@@ -15,7 +15,7 @@ async function startApplication() {
   self.pyodide.globals.set("sendPatch", sendPatch);
   console.log("Loaded!");
   await self.pyodide.loadPackage("micropip");
-  const env_spec = ['https://cdn.holoviz.org/panel/1.2.3/dist/wheels/bokeh-3.2.2-py3-none-any.whl', 'https://cdn.holoviz.org/panel/1.2.3/dist/wheels/panel-1.2.3-py3-none-any.whl', 'pyodide-http==0.2.1', 'matplotlib', 'numpy']
+  const env_spec = ['https://cdn.holoviz.org/panel/1.2.3/dist/wheels/bokeh-3.2.2-py3-none-any.whl', 'https://cdn.holoviz.org/panel/1.2.3/dist/wheels/panel-1.2.3-py3-none-any.whl', 'pyodide-http==0.2.1', 'numpy']
   for (const pkg of env_spec) {
     let pkg_name;
     if (pkg.endsWith('.whl')) {
@@ -48,7 +48,7 @@ from panel.io.pyodide import init_doc, write_doc
 init_doc()
 
 import numpy as np
-import matplotlib.pyplot as plt
+import panel as pn
 
 from bokeh.plotting import figure, show
 from bokeh.models import Legend
@@ -110,9 +110,7 @@ class EM:
         
     def plot_distribution(self):
         # Create a new figure
-        from matplotlib.colors import to_hex
-        cols = plt.get_cmap("Set2")
-        cols = [to_hex(cols(i)) for i in range(8)]
+        cols = ['#66c2a5', '#fc8d62', '#8da0cb', '#e78ac3', '#a6d854', '#ffd92f', '#e5c494', '#b3b3b3']
         title = f'''
         Data (hist) and Estimated Distributions. 
           Model BIC: {self.bic():2.2f}
@@ -139,11 +137,8 @@ class EM:
         legend = Legend(items=legend_items, location="center")
         p.add_layout(legend, 'right')
         p.legend.click_policy = "hide"
-        p.legend.title = 'Click item to hide/show'
 
         return p
-
-import panel as pn
 
 
 
@@ -183,7 +178,7 @@ The algorithm initializes means, weights and variances.
 
 Click on run iteration. 
 
-The algorithm then uses the model to assign each individual to its predicted class.
+The algorithm then uses the model to assign each individual to its predicted class (probabilistic).
 Then it updates mean, weights and variances.
 
 Keep clicking on run iteration.
@@ -205,6 +200,8 @@ X = np.concatenate([x1, x2])
 em = EM(X, n_components=2)
 initial_plot = em.plot_distribution()
 layout = pn.Row(explanation, pn.Column(select_num_classes_fit, button, initial_plot) )   
+
+#pn.extension()
 
 layout.servable()
 
